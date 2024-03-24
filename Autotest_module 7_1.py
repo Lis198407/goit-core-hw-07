@@ -1,7 +1,7 @@
 # Autotest
 #11
 # from random import randrange
-# 
+# asdasds
 
 # class Point:
 #     def __init__(self, x, y):
