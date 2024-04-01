@@ -149,19 +149,21 @@ class AddressBook(UserDict):
     def birthdays(self):
         now = datetime.now()
         i=0
-        upcoming_birth_list=[]
+        upcoming_birthday = {}
         for record in self.data:
             try:
                 birthday_datetime = record.birthday.value
-                greeting_date = birthday_datetime.replace(year = now.year)        #changing the year to current
-                datediff = greeting_date.toordinal()-now.toordinal()              #difference between today and birthday date
-                if datediff in range(0,7):                                        #if less than 7 days than - add to list 
-                    temp_dict = {
-                        "name": record.name.value,
-                        "birthday": f"{record.birthday}"
-                    }
-                    upcoming_birth_list.append(temp_dict)                         #add to list
+                greeting_date = birthday_datetime.replace(year = now.year)                                                        #changing the year to current
+                weekdiff = greeting_date.isocalendar()[1]-now.isocalendar()[1]                                                    #difference in weeks between today and birthday date
+                if upcoming_birthday.get(greeting_date.date().strftime("%d.%m.%Y")):                                              #if already in dict, than add name to the same day
+                        str_temp = upcoming_birthday[greeting_date.date().strftime("%d.%m.%Y")]
+                        upcoming_birthday[greeting_date.date().strftime("%d.%m.%Y")] = str_temp + ', '+ record.name.value
+                elif weekdiff == 0 and greeting_date.isoweekday() in [6,7]:                                                       #if this week and SAT or SAN then MONDAY to greet
+                    greeting_date = datetime(greeting_date.year,greeting_date.month,greeting_date.day+7-greeting_date.weekday())  # shift to next monday if weekend
+                elif weekdiff == 1:                                                                                               #if next week than - date 
+                    upcoming_birthday[greeting_date.date().strftime("%d.%m.%Y")] = record.name.value
             except Exception as ex:
                 raise WrongRecord (f"birthdays: error message {ex}, record: {record}")
             i +=1
-        return upcoming_birth_list
+        # upcoming_birthday_list.append(temp_dict)                                                                                #add to list this week birthdays
+        return upcoming_birthday
