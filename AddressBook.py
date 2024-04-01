@@ -165,5 +165,4 @@ class AddressBook(UserDict):
             except Exception as ex:
                 raise WrongRecord (f"birthdays: error message {ex}, record: {record}")
             i +=1
-        # upcoming_birthday_list.append(temp_dict)                                                                                #add to list this week birthdays
         return upcoming_birthday
